@@ -33,11 +33,22 @@ on fs
 
     chmod 644 /mnt/vendor/persist/audio/us_manual_cal
 
+    mkdir /mnt/vendor/persist/subsys 0770 root system
+
+    mkdir /mnt/vendor/persist/camera 0777 root root
+
 on init
     chown system system /sys/class/leds/blue/brightness
     chown system system /sys/class/leds/blue/breath
     chown system system /sys/class/leds/green/brightness
     chown system system /sys/class/leds/green/breath
+
+    mkdir /dev/cpuset/camera-daemon
+    write /dev/cpuset/camera-daemon/cpus 0-7
+    write /dev/cpuset/camera-daemon/mems 0
+    chown cameraserver cameraserver /dev/cpuset/camera-daemon
+    chown cameraserver cameraserver /dev/cpuset/camera-daemon/tasks
+    chmod 0660 /dev/cpuset/camera-daemon/tasks
 
     chown system camera /dev/drv8846_dev
     chown system camera /dev/akm09970
@@ -62,6 +73,15 @@ on post-fs-data
 
     chmod 0644 /dev/elliptic0
     chmod 0644 /dev/elliptic1
+
+    chown system system /dev/tfa_reg
+    chown system system /dev/tfa_rw
+    chown system system /dev/tfa_rpc
+    chown system system /dev/tfa_control
+    chmod 0660 /dev/tfa_reg
+    chmod 0660 /dev/tfa_rw
+    chmod 0660 /dev/tfa_rpc
+    chmod 0660 /dev/tfa_control
 
 on boot
     # Create persist for camera calibration data
